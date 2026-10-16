@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "komoot-mcp"
+dynamic = ["version"]
+description = "MCP server that finds Komoot routes by distance, start point, surface and scenery, and builds new gravel routes from saved tours."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Nuno Ferreira" }]
+dependencies = [
+    "mcp>=1.8,<2",
+    "requests>=2.28",
+    "keyring>=23.0",
+    "gpxpy>=1.6",
+]
+
+[project.scripts]
+komoot-mcp = "komoot_mcp.__main__:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.hatch.version]
+path = "src/komoot_mcp/__about__.py"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src/komoot_mcp"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/komoot_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
