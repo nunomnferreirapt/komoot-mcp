@@ -30,12 +30,9 @@ flowchart TB
     Q(["You, in Claude: a distance, a start, how much gravel, what to see"]):::human
     Q --> CL["`**Claude** picks the tools and calls them over MCP`"]:::sys
     CL --> T1["list_tours: planned and recorded, by sport, place, radius"]:::sys
-    CL --> T2["get_tour_segments: surface and way-type spans turned into percentages"]:::sys
-    CL --> T3["get_highlights and your saved ones, near a point"]:::sys
-    T1 --> RC
-    T2 --> RC
-    T3 --> RC
-    RC["build_combined_route: single-surface segments, forward runs, scored by gravel and highlights"]:::sys
+    T1 --> T2["get_tour_segments: surface and way-type spans turned into percentages"]:::sys
+    T2 --> T3["get_highlights and your saved ones, near a point"]:::sys
+    T3 --> RC["build_combined_route: single-surface segments, forward runs, scored by gravel and highlights"]:::sys
     RC --> OS["OSRM public cycling router joins the chosen runs"]:::sys
     OS --> OUT["A GPX track plus a waypoint list for the Komoot planner"]:::out
     OUT --> R(["You ride it, or upload it as a new planned tour"]):::human
