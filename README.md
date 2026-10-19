@@ -4,7 +4,7 @@ An MCP server that lets Claude search your Komoot tours by distance, start point
 
 ## Preview
 
-```
+```text
 You:    Find me a 50 km gravel loop within 30 minutes of Amsterdam,
         at least 60% unpaved, and tell me what is scenic along the way.
 
@@ -24,6 +24,26 @@ Claude: I checked 14 planned tours near Amsterdam and pulled surface data for th
 
 ## What it does
 
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 600, "nodeSpacing": 30, "rankSpacing": 32}}}%%
+flowchart TB
+    Q(["You, in Claude: a distance, a start, how much gravel, what to see"]):::human
+    Q --> CL["`**Claude** picks the tools and calls them over MCP`"]:::sys
+    CL --> T1["list_tours: planned and recorded, by sport, place, radius"]:::sys
+    CL --> T2["get_tour_segments: surface and way-type spans turned into percentages"]:::sys
+    CL --> T3["get_highlights and your saved ones, near a point"]:::sys
+    T1 --> RC
+    T2 --> RC
+    T3 --> RC
+    RC["build_combined_route: single-surface segments, forward runs, scored by gravel and highlights"]:::sys
+    RC --> OS["OSRM public cycling router joins the chosen runs"]:::sys
+    OS --> OUT["A GPX track plus a waypoint list for the Komoot planner"]:::out
+    OUT --> R(["You ride it, or upload it as a new planned tour"]):::human
+    classDef sys fill:#1f3a5f,stroke:#7aa2d8,color:#ffffff
+    classDef human fill:#6b4514,stroke:#e0a95a,color:#ffffff
+    classDef out fill:#1e4d3a,stroke:#6fcf97,color:#ffffff
+```
+
 1. Lists your planned and recorded tours by sport, location and radius.
 2. Returns a tour's surface breakdown (gravel, asphalt, dirt) and way types, so a ride can be scored by how much is unpaved.
 3. Downloads any tour as GPX, or uploads a GPX as a new planned tour.
@@ -34,7 +54,7 @@ Claude: I checked 14 planned tours near Amsterdam and pulled surface data for th
 
 ## Why this exists
 
-I ride gravel around Amsterdam and wanted to plan rides from inside Claude instead of clicking through maps. Komoot has the surface data; this server makes it available as tools. It is the same habit as the work tools on my profile: when a routine has a data source, give the assistant the tools and let it do the lookups.
+I ride gravel around Amsterdam and wanted to plan rides from inside Claude instead of clicking through maps. Komoot has the surface data; this server makes it available as tools, and [gravel-ride-plan](https://github.com/nunomnferreirapt/gravel-ride-plan) uses them for the route step of a full ride plan. It is the same habit as the work tools on my profile: when a routine has a data source, give the assistant the tools and let it do the lookups.
 
 ## Requirements
 
@@ -84,7 +104,7 @@ A FastMCP app over Komoot's web API. It signs in with Basic Auth, keeps the shor
 
 ## Repository layout
 
-```
+```text
 src/komoot_mcp/
   __main__.py        MCP tools and server entry point
   auth.py            credentials and Basic Auth session
