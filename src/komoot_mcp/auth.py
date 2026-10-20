@@ -73,8 +73,10 @@ def authenticate(email: str, password: str) -> KomootAuth:
         "Authorization": _basic_auth_header(email, password),
     }
 
-    resp = requests.get(url, headers=headers)
-    resp.raise_for_status()
+    resp = requests.get(url, headers=headers, timeout=30)
+    if resp.status_code >= 400:
+        # No URL in the message: the sign-in URL carries the email.
+        raise RuntimeError(f"Komoot sign-in failed with HTTP {resp.status_code}")
 
     data = resp.json()
     return KomootAuth(

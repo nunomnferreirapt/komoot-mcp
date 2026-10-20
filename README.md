@@ -59,6 +59,8 @@ I ride gravel around Amsterdam and wanted to plan rides from inside Claude inste
 - A Komoot account. Credentials go in environment variables or the system keychain (see Install); they are never written to disk by this project.
 - Claude Code or Claude Desktop
 
+Unofficial: this server talks to Komoot's web API and is not affiliated with or endorsed by Komoot; use it within Komoot's terms, at your own risk. The route combiner calls the public OSRM demo server, at most 30 calls per build, within its light-use policy.
+
 ## Install
 
 ```bash
@@ -68,7 +70,7 @@ uv sync
 uv run pytest
 ```
 
-Register the server, then ask Claude once to run the `setup_credentials` tool: it stores your Komoot email and password in the system keychain under the service `komoot-mcp`, and no config file ever holds them. Claude Code:
+Register the server, then ask Claude once to run the `setup_credentials` tool: it stores your Komoot email and password in the system keychain under the service `komoot-mcp`, and no config file ever holds them. The password passes through the conversation that one time; set the two environment variables instead if you would rather it never did. Claude Code:
 
 ```bash
 claude mcp add -s user komoot-mcp -- uv --directory /absolute/path/to/komoot-mcp run komoot-mcp
