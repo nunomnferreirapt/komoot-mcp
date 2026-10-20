@@ -89,9 +89,9 @@ Claude Desktop, in `claude_desktop_config.json`:
 }
 ```
 
-If you prefer environment variables, set `KOMOOT_EMAIL` and `KOMOOT_PASSWORD` in the server's `env` block instead; they take precedence over the keychain.
+If you prefer environment variables, set `KOMOOT_EMAIL` and `KOMOOT_PASSWORD` in the server's `env` block instead; they take precedence over the keychain. That block sits in plain text in the client's config file (`claude_desktop_config.json`, or `~/.claude.json` for Claude Code), so the keychain is the safer place; to keep the password out of the config, export the two variables in the shell that starts the client.
 
-Optional variables: `KOMOOT_MCP_ROUTES_DIR` (where built routes are saved, default `~/komoot-mcp-routes`) and `KOMOOT_MCP_CACHE_DIR` (parsed tour cache, default `~/.cache/komoot-mcp`).
+Optional variables: `KOMOOT_MCP_ROUTES_DIR` (where built routes are saved, default `~/komoot-mcp-routes`) and `KOMOOT_MCP_CACHE_DIR` (parsed tour cache, default `~/.cache/komoot-mcp`). Both hold your tours' full GPS tracks and your saved highlights in plain files, so keep them outside any folder you push to a public repo.
 
 ## Usage
 

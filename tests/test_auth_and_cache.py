@@ -32,3 +32,47 @@ def test_cache_round_trip_in_configured_dir(monkeypatch, tmp_path):
     reloaded = cache.load_cache()
     assert cache.get_cached_highlights(reloaded)[0]["name"] == "Windmill"
     assert cache.get_cached_segments(reloaded, 999) is None
+
+
+def test_sign_in_connection_error_hides_the_email(monkeypatch):
+    def refuse(url, **kwargs):
+        raise auth.requests.ConnectionError(f"Max retries exceeded with url: {url}")
+
+    monkeypatch.setattr(auth.requests, "get", refuse)
+    with pytest.raises(RuntimeError) as excinfo:
+        auth.authenticate("rider@example.com", "placeholder")
+    assert "rider@example.com" not in str(excinfo.value)
+    assert excinfo.value.__cause__ is None
+
+
+def test_api_requests_get_a_default_timeout(monkeypatch):
+    seen = {}
+
+    class Ok:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+    def fake_request(method, url, **kwargs):
+        seen.update(kwargs)
+        return Ok()
+
+    monkeypatch.setattr(auth, "get_auth", lambda: auth.KomootAuth("12345", "token", "Rider", 0.0))
+    monkeypatch.setattr(auth.requests, "request", fake_request)
+    auth.make_request("GET", "https://api.komoot.de/v007/tours/1")
+    assert seen["timeout"] == auth._REQUEST_TIMEOUT
+
+
+def test_setup_credentials_stores_nothing_when_sign_in_fails(monkeypatch):
+    import asyncio
+
+    from komoot_mcp import __main__ as server
+
+    def fail(email, password):
+        raise RuntimeError("Komoot sign-in failed with HTTP 401")
+
+    monkeypatch.setattr(auth, "authenticate", fail)
+    monkeypatch.setattr(auth, "store_credentials", lambda *a: pytest.fail("stored before verifying"))
+    result = asyncio.run(server.setup_credentials("rider@example.com", "wrong"))
+    assert result.startswith("Credentials not stored")

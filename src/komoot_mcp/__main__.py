@@ -24,14 +24,15 @@ async def setup_credentials(email: str, password: str) -> str:
 
     Call this once before using any other Komoot tools, unless you set the
     KOMOOT_EMAIL and KOMOOT_PASSWORD environment variables instead.
-    Credentials are stored in the system keychain under service 'komoot-mcp'.
+    Credentials are verified first, then stored in the system keychain under
+    service 'komoot-mcp'; a failed sign-in stores nothing.
     """
-    auth.store_credentials(email, password)
     try:
         komoot_auth = auth.authenticate(email, password)
-        return f"Credentials stored and verified. User: {komoot_auth.display_name} (ID: {komoot_auth.user_id})"
     except Exception as e:
-        return f"Credentials stored but verification failed: {e}. Check email/password."
+        return f"Credentials not stored, verification failed: {e}. Check email/password."
+    auth.store_credentials(email, password)
+    return f"Credentials verified and stored. User: {komoot_auth.display_name} (ID: {komoot_auth.user_id})"
 
 
 @mcp.tool()

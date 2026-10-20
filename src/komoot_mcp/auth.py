@@ -14,8 +14,9 @@ ENV_EMAIL = "KOMOOT_EMAIL"
 ENV_PASSWORD = "KOMOOT_PASSWORD"
 AUTH_URL = "https://api.komoot.de/v006/account/email/{email}/"
 
-# Token TTL: KomootGPX treats tokens as valid for ~15 min, we use 10 min to be safe
+# Token TTL: KomootGPX caches tokens for 15 min; we use 10 min to be safe
 _TOKEN_TTL = 600
+_REQUEST_TIMEOUT = 30
 
 
 @dataclass
@@ -73,9 +74,12 @@ def authenticate(email: str, password: str) -> KomootAuth:
         "Authorization": _basic_auth_header(email, password),
     }
 
-    resp = requests.get(url, headers=headers, timeout=30)
+    # No URL in any message: the sign-in URL carries the email.
+    try:
+        resp = requests.get(url, headers=headers, timeout=_REQUEST_TIMEOUT)
+    except requests.RequestException as e:
+        raise RuntimeError(f"Komoot sign-in failed: {type(e).__name__}, could not reach api.komoot.de") from None
     if resp.status_code >= 400:
-        # No URL in the message: the sign-in URL carries the email.
         raise RuntimeError(f"Komoot sign-in failed with HTTP {resp.status_code}")
 
     data = resp.json()
@@ -118,6 +122,7 @@ def make_request(
     auth = get_auth()
     headers = kwargs.pop("headers", {})
     headers["Authorization"] = _basic_auth_header(auth.user_id, auth.token)
+    kwargs.setdefault("timeout", _REQUEST_TIMEOUT)
 
     resp = requests.request(method, url, headers=headers, **kwargs)
 
