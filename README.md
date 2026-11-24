@@ -41,6 +41,8 @@ flowchart TB
     classDef out fill:#1e4d3a,stroke:#6fcf97,color:#ffffff
 ```
 
+<img src="assets/diagram-key.svg" alt="Key: rounded amber, a person decides or acts; navy, a step a system runs; Claude in bold, a step Claude runs; green, what comes out">
+
 1. Lists your planned and recorded tours by sport, location and radius.
 2. Returns a tour's surface breakdown (gravel, asphalt, dirt) and way types, so a ride can be scored by how much is unpaved.
 3. Downloads any tour as GPX, or uploads a GPX as a new planned tour.
