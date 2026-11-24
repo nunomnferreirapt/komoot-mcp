@@ -24,6 +24,16 @@ Claude: I checked 14 planned tours near Amsterdam and pulled surface data for th
 
 ## What it does
 
+Key:
+
+```mermaid
+flowchart LR
+    K1(["A person decides or acts"]):::human ~~~ K2["A step a system runs"]:::sys ~~~ K3["`**Claude** skill or agent: a step Claude runs`"]:::sys ~~~ K4["What comes out"]:::out
+    classDef sys fill:#1f3a5f,stroke:#7aa2d8,color:#ffffff
+    classDef human fill:#6b4514,stroke:#e0a95a,color:#ffffff
+    classDef out fill:#1e4d3a,stroke:#6fcf97,color:#ffffff
+```
+
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 600, "nodeSpacing": 30, "rankSpacing": 32}}}%%
 flowchart TB
